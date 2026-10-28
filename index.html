@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101827">
+  <meta name="description" content="বাংলাদেশি মোবাইল নম্বরের ফরম্যাট ও সম্ভাব্য অপারেটর যাচাই করুন।">
+  <title>Number Check — Robi & Airtel</title>
+  <style>
+    :root{--bg:#0b1020;--panel:#121a2d;--panel2:#172238;--text:#f4f7fb;--muted:#aab6cc;--line:#2a3650;--red:#f04452;--orange:#ff7043;--green:#36c98f;--blue:#5c8dff}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,"Noto Sans Bengali","Segoe UI",sans-serif;background:radial-gradient(circle at 12% 0%,#252044 0,transparent 35%),radial-gradient(circle at 90% 8%,#3c1d2b 0,transparent 28%),var(--bg);color:var(--text);min-height:100vh}
+    .wrap{width:min(960px,92%);margin:auto}
+    header{padding:25px 0;display:flex;align-items:center;justify-content:space-between;gap:14px}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:.2px}
+    .logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--red),var(--orange));display:grid;place-items:center;font-weight:900;font-size:18px;box-shadow:0 8px 24px #f0445233}
+    .badge{font-size:12px;color:#c8d3e7;border:1px solid var(--line);border-radius:99px;padding:7px 11px;background:#121a2d99}
+    .hero{text-align:center;padding:48px 0 28px}
+    .eyebrow{display:inline-flex;gap:8px;align-items:center;background:#ffffff0b;border:1px solid var(--line);border-radius:99px;padding:8px 13px;color:#d3def0;font-size:13px}
+    .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px #36c98f1c}
+    h1{font-size:clamp(32px,6vw,54px);line-height:1.12;margin:20px 0 14px;letter-spacing:-1.3px}
+    h1 span{background:linear-gradient(90deg,#ff6875,#ff9b66);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .lead{color:var(--muted);line-height:1.8;max-width:650px;margin:0 auto;font-size:15px}
+    .card{max-width:720px;margin:24px auto 0;background:linear-gradient(180deg,#172238f2,#101827f2);border:1px solid #34415b;border-radius:24px;padding:clamp(20px,4vw,32px);box-shadow:0 25px 70px #0005}
+    label{display:block;font-size:14px;color:#d8e1ef;font-weight:650;margin-bottom:10px}
+    .inputrow{display:flex;gap:10px}
+    input{min-width:0;flex:1;border:1px solid #394762;background:#0b1222;color:white;padding:17px 16px;border-radius:14px;font:inherit;font-size:17px;outline:none;transition:.2s}
+    input:focus{border-color:#ff737e;box-shadow:0 0 0 3px #f0445222}
+    input::placeholder{color:#73819a}
+    button{border:0;border-radius:14px;padding:0 22px;background:linear-gradient(135deg,var(--red),var(--orange));color:white;font:inherit;font-weight:800;cursor:pointer;min-height:56px;transition:transform .15s,filter .15s}
+    button:hover{filter:brightness(1.08);transform:translateY(-1px)}button:active{transform:translateY(0)}
+    .hint{font-size:12px;color:#8795ad;margin:10px 0 0;line-height:1.6}
+    .result{display:none;margin-top:22px;border:1px solid var(--line);background:#0b1222;border-radius:18px;padding:20px}
+    .result.show{display:block;animation:appear .2s ease}
+    @keyframes appear{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+    .resulthead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+    .status{font-size:12px;padding:6px 10px;border-radius:99px;background:#36c98f1a;color:#70e6b6;border:1px solid #36c98f55}
+    .result h2{margin:10px 0 4px;font-size:25px}
+    .number{color:#cbd5e5;font-size:16px;letter-spacing:.4px;overflow-wrap:anywhere}
+    .details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:18px}
+    .detail{padding:13px;background:#ffffff06;border:1px solid #ffffff0d;border-radius:12px}
+    .detail small{display:block;color:#8e9bb2;font-size:12px;margin-bottom:5px}
+    .detail strong{font-size:14px}
+    .copy{background:#202d44;border:1px solid #3a4963;min-height:40px;padding:8px 13px;font-size:13px}
+    .warning{font-size:12px;color:#b6c2d5;line-height:1.7;margin-top:15px;border-left:3px solid #ffad55;padding-left:12px}
+    .features{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:28px auto 0;max-width:860px}
+    .feature{border:1px solid var(--line);background:#121a2d9c;border-radius:16px;padding:18px}
+    .feature .ico{font-size:22px;margin-bottom:10px}.feature strong{display:block;font-size:14px;margin-bottom:6px}.feature p{margin:0;color:var(--muted);font-size:12px;line-height:1.7}
+    .api{max-width:720px;margin:20px auto 0;border:1px dashed #465570;border-radius:16px;padding:17px 19px;color:var(--muted);font-size:13px;line-height:1.7}
+    .api strong{color:#f3f6fc}
+    footer{text-align:center;color:#78869e;font-size:12px;padding:35px 0 28px;line-height:1.8}
+    @media(max-width:620px){header{padding:18px 0}.badge{display:none}.hero{padding-top:30px}.inputrow{flex-direction:column}button{width:100%}.features{grid-template-columns:1fr}.details{grid-template-columns:1fr}.card{border-radius:19px}}
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <div class="brand"><div class="logo">NC</div><div>Number Check<br><span style="font-size:12px;color:#aab6cc;font-weight:500">Bangladesh · Robi & Airtel</span></div></div>
+    <div class="badge">FREE NUMBER FORMAT CHECKER</div>
+  </header>
+  <main class="wrap">
+    <section class="hero">
+      <div class="eyebrow"><span class="dot"></span> দ্রুত · সহজ · মোবাইল-ফ্রেন্ডলি</div>
+      <h1>মোবাইল নম্বর <span>চেক করুন</span></h1>
+      <p class="lead">বাংলাদেশি মোবাইল নম্বরের ফরম্যাট যাচাই করুন এবং নম্বরের প্রিফিক্স অনুযায়ী সম্ভাব্য অপারেটর দেখুন।</p>
+      <div class="card">
+        <form id="checkForm">
+          <label for="phone">বাংলাদেশি মোবাইল নম্বর লিখুন</label>
+          <div class="inputrow">
+            <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="যেমন: 01812345678" maxlength="20" aria-describedby="hint">
+            <button type="submit">নম্বর চেক করুন ↗</button>
+          </div>
+          <p class="hint" id="hint">উদাহরণ: 01812345678, 01612345678, +8801812345678</p>
+        </form>
+        <section class="result" id="result" aria-live="polite">
+          <div class="resulthead"><span class="status" id="status">ফলাফল</span><button class="copy" type="button" id="copyBtn">ফলাফল কপি করুন</button></div>
+          <h2 id="operator">—</h2>
+          <div class="number" id="normalized">—</div>
+          <div class="details">
+            <div class="detail"><small>ফরম্যাট যাচাই</small><strong id="format">—</strong></div>
+            <div class="detail"><small>প্রিফিক্স</small><strong id="prefix">—</strong></div>
+          </div>
+          <p class="warning" id="warning">এই ফলাফল শুধু নম্বরের গঠন ও প্রিফিক্সের ভিত্তিতে তৈরি। এটি সিম সক্রিয় কি না, মালিকানা বা বর্তমান নেটওয়ার্ক নিশ্চিত করে না।</p>
+        </section>
+      </div>
+    </section>
+    <section class="features">
+      <div class="feature"><div class="ico">📱</div><strong>ফরম্যাট যাচাই</strong><p>বাংলাদেশের প্রচলিত ১১ ডিজিটের মোবাইল নম্বর ফরম্যাট পরীক্ষা করে।</p></div>
+      <div class="feature"><div class="ico">🔎</div><strong>প্রিফিক্স শনাক্ত</strong><p>প্রচলিত নম্বর প্রিফিক্স অনুযায়ী সম্ভাব্য অপারেটর দেখায়।</p></div>
+      <div class="feature"><div class="ico">📋</div><strong>সহজে কপি করুন</strong><p>ফলাফল এক ক্লিকেই কপি করে অন্য জায়গায় ব্যবহার করুন।</p></div>
+    </section>
+    <div class="api"><strong>API সংযোগের নোট:</strong> এই সংস্করণে কোনো Robi/Airtel private API সংযুক্ত নেই। অনুমোদিত API access পেলে API endpoint ও নিরাপদ backend যুক্ত করে আরও তথ্য দেখানোর ব্যবস্থা করা যাবে। GitHub Pages-এর frontend-এ secret API key রাখবেন না।</div>
+  </main>
+  <footer class="wrap">Unofficial utility · কোনো টেলিকম অপারেটরের সঙ্গে আনুষ্ঠানিকভাবে যুক্ত নয়।<br>শুধু বৈধ ও অনুমোদিত কাজে ব্যবহার করুন।</footer>
+  <script>
+    const form = document.getElementById('checkForm');
+    const input = document.getElementById('phone');
+    const result = document.getElementById('result');
+    const bnDigits = s => s.replace(/[০-৯]/g, d => String('০১২৩৪৫৬৭৮৯'.indexOf(d)));
+    function normalize(raw) {
+      let s = bnDigits(raw).trim().replace(/[\\s()-]/g, '');
+      if (s.startsWith('+880')) s = '0' + s.slice(4);
+      else if (s.startsWith('880')) s = '0' + s.slice(3);
+      return s;
+    }
+    function detectOperator(number) {
+      const prefix = number.slice(0, 3);
+      // Prefix-based estimate only; number portability (MNP) may change current network.
+      if (prefix === '018') return 'Robi (সম্ভাব্য)';
+      if (prefix === '016') return 'Airtel (সম্ভাব্য)';
+      const groups = {
+        '013':'Grameenphone (সম্ভাব্য)', '017':'Grameenphone (সম্ভাব্য)',
+        '014':'Banglalink (সম্ভাব্য)', '019':'Banglalink (সম্ভাব্য)',
+        '015':'Teletalk (সম্ভাব্য)'
+      };
+      return groups[prefix] || 'অপারেটর শনাক্ত করা যায়নি';
+    }
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const n = normalize(input.value);
+      result.classList.add('show');
+      document.getElementById('normalized').textContent = n || 'কোনো নম্বর দেওয়া হয়নি';
+      const valid = /^01[3-9]\\d{8}$/.test(n);
+      document.getElementById('status').textContent = valid ? 'ফরম্যাট সঠিক' : 'নম্বর যাচাই করুন';
+      document.getElementById('status').style.color = valid ? '#70e6b6' : '#ffb4a9';
+      document.getElementById('status').style.background = valid ? '#36c98f1a' : '#f044521a';
+      document.getElementById('status').style.borderColor = valid ? '#36c98f55' : '#f0445255';
+      document.getElementById('format').textContent = valid ? 'সঠিক ১১ ডিজিটের ফরম্যাট' : 'সঠিক নয়';
+      document.getElementById('prefix').textContent = n.length >= 3 ? n.slice(0,3) : '—';
+      document.getElementById('operator').textContent = valid ? detectOperator(n) : 'সঠিক নম্বর লিখুন';
+      document.getElementById('warning').textContent = valid
+        ? 'এটি প্রিফিক্সভিত্তিক সম্ভাব্য শনাক্তকরণ। MNP-এর কারণে বর্তমান অপারেটর আলাদা হতে পারে। এই টুল সিমের সক্রিয় অবস্থা, নিবন্ধিত ব্যক্তির পরিচয় বা ব্যক্তিগত তথ্য যাচাই করে না।'
+        : 'বাংলাদেশি মোবাইল নম্বর সাধারণত 01 দিয়ে শুরু হওয়া ১১ ডিজিটের হয়। +880 বা 880 দিয়ে লিখলেও সিস্টেম সেটিকে স্থানীয় ফরম্যাটে রূপান্তর করার চেষ্টা করবে।';
+    });
+    document.getElementById('copyBtn').addEventListener('click', async () => {
+      const text = `নম্বর: ${document.getElementById('normalized').textContent}\\nঅপারেটর: ${document.getElementById('operator').textContent}\\nফরম্যাট: ${document.getElementById('format').textContent}`;
+      const btn = document.getElementById('copyBtn');
+      try { await navigator.clipboard.writeText(text); btn.textContent = 'কপি হয়েছে ✓'; }
+      catch { btn.textContent = 'কপি করা যায়নি'; }
+      setTimeout(() => btn.textContent = 'ফলাফল কপি করুন', 1800);
+    });
+  </script>
+</body>
+</html>
