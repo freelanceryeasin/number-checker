@@ -14,4 +14,5 @@ A static, mobile-friendly Bengali number-format checker designed for GitHub Page
 - This static site checks number format and estimates the operator from the prefix only.
 - Mobile Number Portability (MNP) means prefix does not guarantee the current network.
 - It does not identify subscriber names, SIM registration, active status, or private account information.
+- Includes buttons linking to the official Robi and Airtel SIM-service pages.
 - No Robi/Airtel private API is connected in this starter version. Use only an official/authorized API and keep secret keys on a backend, never in this public HTML file.
