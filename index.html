@@ -1,162 +1,129 @@
 <!doctype html>
 <html lang="bn">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#101827">
-  <meta name="description" content="বাংলাদেশি মোবাইল নম্বরের ফরম্যাট ও সম্ভাব্য অপারেটর যাচাই করুন।">
-  <title>Number Check — Robi & Airtel</title>
-  <style>
-    :root{--bg:#0b1020;--panel:#121a2d;--panel2:#172238;--text:#f4f7fb;--muted:#aab6cc;--line:#2a3650;--red:#f04452;--orange:#ff7043;--green:#36c98f;--blue:#5c8dff}
-    *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,-apple-system,"Noto Sans Bengali","Segoe UI",sans-serif;background:radial-gradient(circle at 12% 0%,#252044 0,transparent 35%),radial-gradient(circle at 90% 8%,#3c1d2b 0,transparent 28%),var(--bg);color:var(--text);min-height:100vh}
-    .wrap{width:min(960px,92%);margin:auto}
-    header{padding:25px 0;display:flex;align-items:center;justify-content:space-between;gap:14px}
-    .brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:.2px}
-    .logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--red),var(--orange));display:grid;place-items:center;font-weight:900;font-size:18px;box-shadow:0 8px 24px #f0445233}
-    .badge{font-size:12px;color:#c8d3e7;border:1px solid var(--line);border-radius:99px;padding:7px 11px;background:#121a2d99}
-    .hero{text-align:center;padding:48px 0 28px}
-    .eyebrow{display:inline-flex;gap:8px;align-items:center;background:#ffffff0b;border:1px solid var(--line);border-radius:99px;padding:8px 13px;color:#d3def0;font-size:13px}
-    .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px #36c98f1c}
-    h1{font-size:clamp(32px,6vw,54px);line-height:1.12;margin:20px 0 14px;letter-spacing:-1.3px}
-    h1 span{background:linear-gradient(90deg,#ff6875,#ff9b66);-webkit-background-clip:text;background-clip:text;color:transparent}
-    .lead{color:var(--muted);line-height:1.8;max-width:650px;margin:0 auto;font-size:15px}
-    .card{max-width:720px;margin:24px auto 0;background:linear-gradient(180deg,#172238f2,#101827f2);border:1px solid #34415b;border-radius:24px;padding:clamp(20px,4vw,32px);box-shadow:0 25px 70px #0005}
-    label{display:block;font-size:14px;color:#d8e1ef;font-weight:650;margin-bottom:10px}
-    .inputrow{display:flex;gap:10px}
-    input{min-width:0;flex:1;border:1px solid #394762;background:#0b1222;color:white;padding:17px 16px;border-radius:14px;font:inherit;font-size:17px;outline:none;transition:.2s}
-    input:focus{border-color:#ff737e;box-shadow:0 0 0 3px #f0445222}
-    input::placeholder{color:#73819a}
-    button{border:0;border-radius:14px;padding:0 22px;background:linear-gradient(135deg,var(--red),var(--orange));color:white;font:inherit;font-weight:800;cursor:pointer;min-height:56px;transition:transform .15s,filter .15s}
-    button:hover{filter:brightness(1.08);transform:translateY(-1px)}button:active{transform:translateY(0)}
-    .hint{font-size:12px;color:#8795ad;margin:10px 0 0;line-height:1.6}
-    .result{display:none;margin-top:22px;border:1px solid var(--line);background:#0b1222;border-radius:18px;padding:20px}
-    .result.show{display:block;animation:appear .2s ease}
-    @keyframes appear{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-    .resulthead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-    .status{font-size:12px;padding:6px 10px;border-radius:99px;background:#36c98f1a;color:#70e6b6;border:1px solid #36c98f55}
-    .result h2{margin:10px 0 4px;font-size:25px}
-    .number{color:#cbd5e5;font-size:16px;letter-spacing:.4px;overflow-wrap:anywhere}
-    .details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:18px}
-    .detail{padding:13px;background:#ffffff06;border:1px solid #ffffff0d;border-radius:12px}
-    .detail small{display:block;color:#8e9bb2;font-size:12px;margin-bottom:5px}
-    .detail strong{font-size:14px}
-    .copy{background:#202d44;border:1px solid #3a4963;min-height:40px;padding:8px 13px;font-size:13px}
-    .warning{font-size:12px;color:#b6c2d5;line-height:1.7;margin-top:15px;border-left:3px solid #ffad55;padding-left:12px}
-    .features{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:28px auto 0;max-width:860px}
-    .feature{border:1px solid var(--line);background:#121a2d9c;border-radius:16px;padding:18px}
-    .feature .ico{font-size:22px;margin-bottom:10px}.feature strong{display:block;font-size:14px;margin-bottom:6px}.feature p{margin:0;color:var(--muted);font-size:12px;line-height:1.7}
-    .api{max-width:720px;margin:20px auto 0;border:1px dashed #465570;border-radius:16px;padding:17px 19px;color:var(--muted);font-size:13px;line-height:1.7}
-    .api strong{color:#f3f6fc}
-    footer{text-align:center;color:#78869e;font-size:12px;padding:35px 0 28px;line-height:1.8}
-    @media(max-width:620px){header{padding:18px 0}.badge{display:none}.hero{padding-top:30px}.inputrow{flex-direction:column}button{width:100%}.features{grid-template-columns:1fr}.details{grid-template-columns:1fr}.card{border-radius:19px}}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Robi & Airtel Number Checker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b1020;--panel:#131b31;--panel2:#18233d;--text:#eef3ff;--muted:#a8b4d0;--purple:#a78bfa;--blue:#60a5fa;--orange:#fb923c;--green:#34d399;--red:#fb7185}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at top left,#29235b 0,#0b1020 45%,#10172a 100%);color:var(--text);font-family:'Noto Sans Bengali',sans-serif;padding:20px}
+.wrap{max-width:900px;margin:auto}.hero{text-align:center;padding:22px 10px 18px}.hero h1{margin:0 0 8px;font-size:clamp(24px,4vw,36px);color:#ddd6fe}.hero p{margin:0;color:var(--muted);font-size:14px}
+.card{background:linear-gradient(145deg,rgba(24,35,61,.96),rgba(15,22,40,.96));border:1px solid #ffffff18;border-radius:22px;padding:22px;margin:14px 0;box-shadow:0 18px 50px #0003}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.field label{display:block;color:#cbd5e1;font-size:14px;margin-bottom:7px}.field input,.field select{width:100%;border:1px solid #ffffff20;background:#0c1428;color:var(--text);padding:12px 13px;border-radius:12px;font:inherit;outline:none}.field input:focus,.field select:focus{border-color:var(--purple)}
+.operators{display:flex;gap:10px;flex-wrap:wrap}.op{flex:1;min-width:130px;border:1px solid #ffffff22;background:#0c1428;padding:13px;border-radius:13px;cursor:pointer;display:flex;gap:9px;align-items:center}.op input{accent-color:var(--purple)}.help{font-size:12px;color:var(--muted);margin-top:6px}
+.positions{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:7px}.positions input{text-align:center;padding:10px 3px!important}
+.buttons{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.btn{border:0;border-radius:12px;padding:12px 18px;font:inherit;font-weight:700;cursor:pointer}.primary{background:linear-gradient(135deg,#8b5cf6,#6366f1);color:white;flex:1}.stop{background:#7f1d1d;color:white}.secondary{background:#26334f;color:#e5e7eb}.links{display:flex;gap:10px;flex-wrap:wrap}.links a{display:inline-block;text-decoration:none;border-radius:11px;padding:10px 14px;background:#26334f;color:white;font-size:13px}
+.status{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:13px}.pill{border-radius:999px;background:#ffffff12;padding:6px 11px;color:#ddd6fe}.bar{height:9px;background:#ffffff12;border-radius:999px;overflow:hidden;margin:13px 0}.bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,#8b5cf6,#34d399);transition:width .2s}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stat{background:#ffffff08;border:1px solid #ffffff12;border-radius:14px;padding:13px;text-align:center}.stat b{display:block;font-size:23px;color:#ddd6fe}.stat small{color:var(--muted)}
+.results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-height:300px;overflow:auto}.result{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#07101f;border:1px solid #ffffff15;padding:10px;border-radius:10px;font-weight:700;letter-spacing:.4px}.result button{border:0;background:#26334f;color:white;padding:6px 9px;border-radius:8px;cursor:pointer}
+.log{font:12px/1.6 ui-monospace,monospace;color:#b8c4dd;background:#080d19;border-radius:12px;padding:12px;max-height:150px;overflow:auto;white-space:pre-wrap}
+.notice{font-size:12px;line-height:1.7;color:#fcdca8;background:#78350f33;border:1px solid #f59e0b40;padding:12px;border-radius:12px}
+@media(max-width:600px){body{padding:10px}.card{padding:15px}.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.positions{gap:4px}.positions input{font-size:14px}.results{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
-  <header class="wrap">
-    <div class="brand"><div class="logo">NC</div><div>Number Check<br><span style="font-size:12px;color:#aab6cc;font-weight:500">Bangladesh · Robi & Airtel</span></div></div>
-    <div class="badge">FREE NUMBER FORMAT CHECKER</div>
+<div class="wrap">
+  <header class="hero">
+    <h1>📱 Robi & Airtel Number Checker</h1>
+    <p>পছন্দের নম্বর খুঁজুন • ফলাফল কপি করুন • অফিসিয়াল পেজে যান</p>
   </header>
-  <main class="wrap">
-    <section class="hero">
-      <div class="eyebrow"><span class="dot"></span> দ্রুত · সহজ · মোবাইল-ফ্রেন্ডলি</div>
-      <h1>মোবাইল নম্বর <span>চেক করুন</span></h1>
-      <p class="lead">বাংলাদেশি মোবাইল নম্বরের ফরম্যাট যাচাই করুন এবং নম্বরের প্রিফিক্স অনুযায়ী সম্ভাব্য অপারেটর দেখুন।</p>
-      <div class="card">
-        <form id="checkForm">
-          <label for="phone">বাংলাদেশি মোবাইল নম্বর লিখুন</label>
-          <div class="inputrow">
-            <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="যেমন: 01812345678" maxlength="20" aria-describedby="hint">
-            <button type="submit">নম্বর চেক করুন ↗</button>
-          </div>
-          <p class="hint" id="hint">উদাহরণ: 01812345678, 01612345678, +8801812345678</p>
-        </form>
-        <section class="result" id="result" aria-live="polite">
-          <div class="resulthead"><span class="status" id="status">ফলাফল</span><button class="copy" type="button" id="copyBtn">ফলাফল কপি করুন</button></div>
-          <h2 id="operator">—</h2>
-          <div class="number" id="normalized">—</div>
-          <div class="details">
-            <div class="detail"><small>ফরম্যাট যাচাই</small><strong id="format">—</strong></div>
-            <div class="detail"><small>প্রিফিক্স</small><strong id="prefix">—</strong></div>
-          </div>
-          <p class="warning" id="warning">এই ফলাফল শুধু নম্বরের গঠন ও প্রিফিক্সের ভিত্তিতে তৈরি। এটি সিম সক্রিয় কি না, মালিকানা বা বর্তমান নেটওয়ার্ক নিশ্চিত করে না।</p>
-        </section>
-      </div>
-    </section>
-    <section class="features">
-      <div class="feature"><div class="ico">📱</div><strong>ফরম্যাট যাচাই</strong><p>বাংলাদেশের প্রচলিত ১১ ডিজিটের মোবাইল নম্বর ফরম্যাট পরীক্ষা করে।</p></div>
-      <div class="feature"><div class="ico">🔎</div><strong>প্রিফিক্স শনাক্ত</strong><p>প্রচলিত নম্বর প্রিফিক্স অনুযায়ী সম্ভাব্য অপারেটর দেখায়।</p></div>
-      <div class="feature"><div class="ico">📋</div><strong>সহজে কপি করুন</strong><p>ফলাফল এক ক্লিকেই কপি করে অন্য জায়গায় ব্যবহার করুন।</p></div>
-    </section>
-    <section class="card" style="max-width:860px;margin-top:24px">
-      <div style="text-align:center;margin-bottom:18px">
-        <h2 style="margin:0 0 8px;font-size:24px">পছন্দের সিম নম্বর খুঁজুন</h2>
-        <p style="margin:0;color:var(--muted);font-size:14px;line-height:1.7">অপারেটরের অফিসিয়াল ওয়েবসাইটে গিয়ে উপলভ্য নম্বর দেখুন এবং নতুন সিম কেনার প্রক্রিয়া সম্পন্ন করুন।</p>
-      </div>
-      <div class="features" style="margin-top:0;grid-template-columns:repeat(2,minmax(0,1fr))">
-        <div class="feature" style="text-align:center">
-          <div class="ico">🔴</div><strong>Robi Prepaid SIM</strong>
-          <p style="margin-bottom:14px">Robi-এর অফিসিয়াল সিম সার্ভিস পেজে যান।</p>
-          <a href="https://www.robi.com.bd/bn/sim-services?service=prepaid" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:11px 16px;border-radius:12px;background:linear-gradient(135deg,var(--red),var(--orange));color:white;text-decoration:none;font-weight:800;font-size:14px">Robi SIM কিনুন ↗</a>
-        </div>
-        <div class="feature" style="text-align:center">
-          <div class="ico">🔵</div><strong>Airtel Prepaid SIM</strong>
-          <p style="margin-bottom:14px">Airtel-এর অফিসিয়াল সিম সার্ভিস পেজে যান।</p>
-          <a href="https://www.bd.airtel.com/bn/sim-services?requestType=DR" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:11px 16px;border-radius:12px;background:linear-gradient(135deg,#315fd8,#6d8fff);color:white;text-decoration:none;font-weight:800;font-size:14px">Airtel SIM কিনুন ↗</a>
-        </div>
-      </div>
-      <p class="hint" style="text-align:center;margin-top:16px">এই বাটনগুলো অফিসিয়াল পেজে নিয়ে যাবে। অপারেটরের পেজে দেখানো নম্বর ও প্রাপ্যতা তাদের নিয়ন্ত্রণে।</p>
-    </section>
-    <div class="api"><strong>API সংযোগের নোট:</strong> এই সংস্করণে কোনো Robi/Airtel private API সংযুক্ত নেই। অনুমোদিত API access পেলে API endpoint ও নিরাপদ backend যুক্ত করে আরও তথ্য দেখানোর ব্যবস্থা করা যাবে। GitHub Pages-এর frontend-এ secret API key রাখবেন না।</div>
-  </main>
-  <footer class="wrap">Unofficial utility · কোনো টেলিকম অপারেটরের সঙ্গে আনুষ্ঠানিকভাবে যুক্ত নয়।<br>শুধু বৈধ ও অনুমোদিত কাজে ব্যবহার করুন।</footer>
-  <script>
-    const form = document.getElementById('checkForm');
-    const input = document.getElementById('phone');
-    const result = document.getElementById('result');
-    const bnDigits = s => s.replace(/[০-৯]/g, d => String('০১২৩৪৫৬৭৮৯'.indexOf(d)));
-    function normalize(raw) {
-      let s = bnDigits(raw).trim().replace(/[\\s()-]/g, '');
-      if (s.startsWith('+880')) s = '0' + s.slice(4);
-      else if (s.startsWith('880')) s = '0' + s.slice(3);
-      return s;
-    }
-    function detectOperator(number) {
-      const prefix = number.slice(0, 3);
-      // Prefix-based estimate only; number portability (MNP) may change current network.
-      if (prefix === '018') return 'Robi (সম্ভাব্য)';
-      if (prefix === '016') return 'Airtel (সম্ভাব্য)';
-      const groups = {
-        '013':'Grameenphone (সম্ভাব্য)', '017':'Grameenphone (সম্ভাব্য)',
-        '014':'Banglalink (সম্ভাব্য)', '019':'Banglalink (সম্ভাব্য)',
-        '015':'Teletalk (সম্ভাব্য)'
-      };
-      return groups[prefix] || 'অপারেটর শনাক্ত করা যায়নি';
-    }
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      const n = normalize(input.value);
-      result.classList.add('show');
-      document.getElementById('normalized').textContent = n || 'কোনো নম্বর দেওয়া হয়নি';
-      const valid = /^01[3-9]\\d{8}$/.test(n);
-      document.getElementById('status').textContent = valid ? 'ফরম্যাট সঠিক' : 'নম্বর যাচাই করুন';
-      document.getElementById('status').style.color = valid ? '#70e6b6' : '#ffb4a9';
-      document.getElementById('status').style.background = valid ? '#36c98f1a' : '#f044521a';
-      document.getElementById('status').style.borderColor = valid ? '#36c98f55' : '#f0445255';
-      document.getElementById('format').textContent = valid ? 'সঠিক ১১ ডিজিটের ফরম্যাট' : 'সঠিক নয়';
-      document.getElementById('prefix').textContent = n.length >= 3 ? n.slice(0,3) : '—';
-      document.getElementById('operator').textContent = valid ? detectOperator(n) : 'সঠিক নম্বর লিখুন';
-      document.getElementById('warning').textContent = valid
-        ? 'এটি প্রিফিক্সভিত্তিক সম্ভাব্য শনাক্তকরণ। MNP-এর কারণে বর্তমান অপারেটর আলাদা হতে পারে। এই টুল সিমের সক্রিয় অবস্থা, নিবন্ধিত ব্যক্তির পরিচয় বা ব্যক্তিগত তথ্য যাচাই করে না।'
-        : 'বাংলাদেশি মোবাইল নম্বর সাধারণত 01 দিয়ে শুরু হওয়া ১১ ডিজিটের হয়। +880 বা 880 দিয়ে লিখলেও সিস্টেম সেটিকে স্থানীয় ফরম্যাটে রূপান্তর করার চেষ্টা করবে।';
-    });
-    document.getElementById('copyBtn').addEventListener('click', async () => {
-      const text = `নম্বর: ${document.getElementById('normalized').textContent}\\nঅপারেটর: ${document.getElementById('operator').textContent}\\nফরম্যাট: ${document.getElementById('format').textContent}`;
-      const btn = document.getElementById('copyBtn');
-      try { await navigator.clipboard.writeText(text); btn.textContent = 'কপি হয়েছে ✓'; }
-      catch { btn.textContent = 'কপি করা যায়নি'; }
-      setTimeout(() => btn.textContent = 'ফলাফল কপি করুন', 1800);
-    });
-  </script>
+  <section class="card">
+    <h3>১. অপারেটর নির্বাচন</h3>
+    <div class="operators">
+      <label class="op"><input type="radio" name="brand" value="AIRTEL" checked> 🔵 Airtel (016)</label>
+      <label class="op"><input type="radio" name="brand" value="ROBI"> 🟠 Robi (018)</label>
+    </div>
+    <div class="grid" style="margin-top:18px">
+      <div class="field"><label for="start">শুরুর শেষ ৮ ডিজিট</label><input id="start" value="82200000" inputmode="numeric" maxlength="8"><div class="help">যে ৮ ডিজিট থেকে খোঁজা শুরু হবে</div></div>
+      <div class="field"><label for="max">সর্বোচ্চ কতটি নম্বর পরীক্ষা হবে</label><input id="max" type="number" min="1" max="500" value="50"><div class="help">সুরক্ষার জন্য একবারে সর্বোচ্চ ৫০০টি</div></div>
+      <div class="field"><label for="delay">প্রতি অনুরোধের বিরতি</label><select id="delay"><option value="250">২৫০ মিলিসেকেন্ড</option><option value="500" selected>৫০০ মিলিসেকেন্ড</option><option value="1000">১ সেকেন্ড</option></select></div>
+      <div class="field"><label>পূর্ণ নম্বরের প্রিফিক্স</label><input id="prefix" value="88016" readonly><div class="help">বাংলাদেশের কান্ট্রি কোডসহ</div></div>
+    </div>
+  </section>
+  <section class="card">
+    <h3>২. নির্দিষ্ট ডিজিট (ঐচ্ছিক)</h3>
+    <p class="help" style="margin:0 0 12px">শেষ ৮ ডিজিটের যে অবস্থানে নির্দিষ্ট সংখ্যা চান, সেখানে ০–৯ লিখুন। ফাঁকা রাখলে যেকোনো ডিজিট চলবে।</p>
+    <div class="positions" id="positions"></div>
+    <div class="buttons"><button id="startBtn" class="btn primary">🚀 চেক শুরু করুন</button><button id="stopBtn" class="btn stop" disabled>⏹ থামান</button><button id="clearBtn" class="btn secondary">ফলাফল মুছুন</button></div>
+  </section>
+  <section class="card">
+    <div class="status"><strong id="status">⏸ প্রস্তুত</strong><span class="pill" id="pct">০%</span></div>
+    <div class="bar"><span id="bar"></span></div>
+    <div class="stats">
+      <div class="stat"><b id="checked">০</b><small>চেক হয়েছে</small></div>
+      <div class="stat"><b id="found">০</b><small>পাওয়া গেছে</small></div>
+      <div class="stat"><b id="total">০</b><small>মোট পরীক্ষা</small></div>
+      <div class="stat"><b id="speed">০</b><small>প্রতি মিনিটে</small></div>
+    </div>
+  </section>
+  <section class="card">
+    <h3>📋 পাওয়া নম্বর</h3>
+    <div id="results" class="results"><span class="help">এখনও কোনো নম্বর পাওয়া যায়নি।</span></div>
+    <div class="buttons"><button class="btn secondary" id="copyAll">সব নম্বর কপি</button><button class="btn secondary" id="download">TXT ডাউনলোড</button></div>
+  </section>
+  <section class="card">
+    <h3>📝 কার্যক্রমের লগ</h3><div id="log" class="log">সিস্টেম প্রস্তুত।</div>
+  </section>
+  <section class="card">
+    <h3>🛒 অফিসিয়াল SIM পেজ</h3>
+    <div class="links">
+      <a href="https://www.robi.com.bd/bn/sim-services?service=prepaid" target="_blank" rel="noopener">Robi SIM Services ↗</a>
+      <a href="https://www.bd.airtel.com/bn/sim-services?requestType=DR" target="_blank" rel="noopener">Airtel SIM Services ↗</a>
+    </div>
+  </section>
+  <section class="card notice">
+    <b>গুরুত্বপূর্ণ:</b> এই পেজটি রেফারেন্স সাইটে দেখা API endpoint ব্যবহার করে। API-এর অনুমতি/শর্ত মেনে ব্যবহার করুন। API-এর CORS, rate limit বা server response বদলে গেলে ব্রাউজার থেকে চেক নাও চলতে পারে। নম্বর পাওয়া গেলেও কেনার আগে অপারেটরের অফিসিয়াল পেজে পুনরায় যাচাই করুন। এই স্ট্যাটিক GitHub Pages সংস্করণে কোনো API secret রাখা হয়নি।
+  </section>
+</div>
+<script>
+const API_URL='https://da-api.robi.com.bd/da-nll/free-msisdn/get-msisdn-list';
+const $=id=>document.getElementById(id);
+const bn=n=>String(n).replace(/\d/g,d=>'০১২৩৪৫৬৭৮৯'[d]);
+const pos=$('positions');
+for(let i=0;i<8;i++){const inp=document.createElement('input');inp.inputMode='numeric';inp.maxLength=1;inp.placeholder=String(i+1);inp.dataset.pos=i;inp.setAttribute('aria-label','ডিজিট অবস্থান '+(i+1));inp.addEventListener('input',()=>{inp.value=inp.value.replace(/\D/g,'').slice(0,1)});pos.appendChild(inp)}
+let running=false, controller=null, foundNumbers=[], checked=0, startTime=0;
+function brand(){return document.querySelector('input[name="brand"]:checked').value}
+function updatePrefix(){$('prefix').value=brand()==='ROBI'?'88018':'88016'}
+document.querySelectorAll('input[name="brand"]').forEach(r=>r.addEventListener('change',updatePrefix));
+function log(msg){$('log').textContent+=`\n${new Date().toLocaleTimeString()} ${msg}`;$('log').scrollTop=$('log').scrollHeight}
+function stats(total){$('checked').textContent=bn(checked);$('found').textContent=bn(foundNumbers.length);$('total').textContent=bn(total);const pct=total?Math.min(100,checked/total*100):0;$('pct').textContent=bn(Math.round(pct))+'%';$('bar').style.width=pct+'%';const mins=Math.max((Date.now()-startTime)/60000,1/60);$('speed').textContent=bn(Math.round(checked/mins))}
+function render(){const root=$('results');root.innerHTML='';if(!foundNumbers.length){root.innerHTML='<span class="help">এখনও কোনো নম্বর পাওয়া যায়নি।</span>';return}for(const n of foundNumbers){const row=document.createElement('div');row.className='result';const span=document.createElement('span');span.textContent=n;const b=document.createElement('button');b.textContent='কপি';b.onclick=async()=>{await navigator.clipboard.writeText(n);log('নম্বর কপি করা হয়েছে: '+n)};row.append(span,b);root.appendChild(row)}}
+function matchesFixed(s){for(const inp of pos.querySelectorAll('input')){const v=inp.value.trim();if(v!==''&&s[Number(inp.dataset.pos)]!==v)return false}return true}
+function delay(ms){return new Promise(r=>setTimeout(r,ms))}
+async function checkOne(number, operator, signal){
+ const payload={msisdn:number,brand:operator,simCategory:'PREPAID'};
+ const response=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal});
+ if(!response.ok)throw new Error('HTTP '+response.status);
+ const data=await response.json();
+ if(typeof data.available!=='boolean')throw new Error('অপ্রত্যাশিত API response');
+ return data.available;
+}
+$('startBtn').onclick=async()=>{
+ if(running){return}
+ const start=$('start').value.trim(), max=Number($('max').value), wait=Number($('delay').value);
+ if(!/^\d{8}$/.test(start)){alert('শুরুর ঘরে ঠিক ৮টি ডিজিট লিখুন।');return}
+ if(!Number.isInteger(max)||max<1||max>500){alert('একবারে ১ থেকে ৫০০টি নম্বর নির্বাচন করুন।');return}
+ running=true;controller=new AbortController();foundNumbers=[];checked=0;startTime=Date.now();$('log').textContent='';$('startBtn').disabled=true;$('stopBtn').disabled=false;$('status').textContent='🚀 চলছে';$('total').textContent=bn(max);render();log('অপারেটর: '+brand()+'; সর্বোচ্চ পরীক্ষা: '+max);
+ let last=Number(start);
+ try{
+  let attempts=0;
+  while(running&&attempts<max&&last<100000000){
+   const suffix=String(last).padStart(8,'0');last++;if(!matchesFixed(suffix))continue;
+   const number=(brand()==='ROBI'?'88018':'88016')+suffix;
+   try{const available=await checkOne(number,brand(),controller.signal);checked++;attempts++;if(available){foundNumbers.push(number);render();log('উপলভ্য বলে API জানিয়েছে: '+number)}}
+   catch(e){if(e.name==='AbortError')break;log('অনুরোধ ব্যর্থ: '+e.message+' — চেক বন্ধ করা হয়েছে');break}
+   stats(max);await delay(wait);
+  }
+  if(running)log('চেক সম্পন্ন।');else log('ব্যবহারকারী চেক বন্ধ করেছেন।');
+ }finally{running=false;$('startBtn').disabled=false;$('stopBtn').disabled=true;$('status').textContent='⏸ প্রস্তুত';stats(max)}
+};
+$('stopBtn').onclick=()=>{running=false;if(controller)controller.abort();$('status').textContent='⏹ থামানো হয়েছে'};
+$('clearBtn').onclick=()=>{foundNumbers=[];checked=0;render();stats(0);$('log').textContent='ফলাফল মুছে ফেলা হয়েছে।'};
+$('copyAll').onclick=async()=>{if(!foundNumbers.length){alert('কপি করার মতো নম্বর নেই।');return}await navigator.clipboard.writeText(foundNumbers.join('\n'));log('সব পাওয়া নম্বর কপি করা হয়েছে।')};
+$('download').onclick=()=>{if(!foundNumbers.length){alert('ডাউনলোড করার মতো নম্বর নেই।');return}const blob=new Blob([foundNumbers.join('\n')],{type:'text/plain;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='available-numbers.txt';a.click();URL.revokeObjectURL(a.href)};
+updatePrefix();render();stats(0);
+</script>
 </body>
 </html>

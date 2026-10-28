@@ -1,18 +1,15 @@
-# Robi & Airtel Number Checker
+# Robi & Airtel Number Checker (GitHub Pages)
 
-A static, mobile-friendly Bengali number-format checker designed for GitHub Pages.
-
-## Publish on GitHub Pages
-1. Sign in to GitHub and create a new repository, for example `number-checker`.
+## Deploy
+1. Create a GitHub repository.
 2. Upload `index.html` to the repository root.
 3. Open **Settings → Pages**.
-4. Under **Build and deployment**, select **Deploy from a branch**.
-5. Select branch `main` and folder `/ (root)`, then click **Save**.
-6. Wait for GitHub to publish the site. The address will look like `https://YOUR-USERNAME.github.io/number-checker/`.
+4. Under Build and deployment, choose **Deploy from a branch**, branch `main`, folder `/ (root)`.
+5. Save and wait for GitHub Pages to publish.
 
-## Important limitations
-- This static site checks number format and estimates the operator from the prefix only.
-- Mobile Number Portability (MNP) means prefix does not guarantee the current network.
-- It does not identify subscriber names, SIM registration, active status, or private account information.
-- Includes buttons linking to the official Robi and Airtel SIM-service pages.
-- No Robi/Airtel private API is connected in this starter version. Use only an official/authorized API and keep secret keys on a backend, never in this public HTML file.
+## API note
+This demo uses the endpoint visible in the referenced public source:
+`https://da-api.robi.com.bd/da-nll/free-msisdn/get-msisdn-list`
+
+It sends POST JSON `{ "msisdn": "...", "brand": "AIRTEL" | "ROBI", "simCategory": "PREPAID" }`.
+Availability, CORS, and permitted use must be confirmed with the API owner. The UI limits each run to 500 checks and waits between requests. Do not add secrets to client-side code.
