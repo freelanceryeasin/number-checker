@@ -39,9 +39,43 @@
 .search-hero h1{font-size:clamp(26px,4.5vw,40px);margin-bottom:8px}
 .search-hero p{font-size:15px;max-width:600px}
 @media(max-width:600px){.search-hero{padding:23px 18px}}
+
+/* Theme switch: only colors change; layout and functionality remain unchanged */
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:1000;border:1px solid var(--line);border-radius:999px;padding:10px 14px;background:var(--card);color:var(--ink);box-shadow:var(--shadow);font:700 13px system-ui,sans-serif;cursor:pointer}
+body.dark-mode{--ink:#edf2fa;--muted:#aab5c7;--paper:#0b1018;--card:#151d2a;--line:#2a3546;--shadow:0 16px 45px rgba(0,0,0,.24);background:radial-gradient(circle at 10% 0%,#351a22 0,transparent 28%),radial-gradient(circle at 95% 12%,#253316 0,transparent 24%),var(--paper);color:var(--ink)}
+body.dark-mode .card{background:var(--card);border-color:var(--line)}
+body.dark-mode .field label{color:#dbe3ef}
+body.dark-mode .field input,body.dark-mode .field select,body.dark-mode .positions input{background:#0e1520;color:var(--ink);border-color:#354257}
+body.dark-mode .op{background:linear-gradient(145deg,#1a2433,#121a26);border-color:#344155;color:var(--ink);box-shadow:0 8px 22px rgba(0,0,0,.16)}
+body.dark-mode .op:has(input:checked){background:linear-gradient(145deg,#26351a,#1b2915);border-color:#b9f24a;box-shadow:0 0 0 3px #b9f24a25}
+body.dark-mode .op .symbol{background:#fff;border-color:#3a4659}
+body.dark-mode .op .symbol.cirkle{background:#f7ffe9}
+body.dark-mode .op .symbol.robi{background:#fff1f2}
+body.dark-mode .primary,body.dark-mode .links a:not(.robi-link):not(.cirkle-link),body.dark-mode .call-btn{background:#e8eef7;color:#111827}
+body.dark-mode .secondary{background:#2a3546;color:#edf2fa}
+body.dark-mode .stop{background:#4a2028;color:#ffd9de}
+body.dark-mode .stat{background:#101722;border-color:var(--line)}
+body.dark-mode .stat b{color:#edf2fa}
+body.dark-mode .result{background:#101722;border-color:var(--line);color:#edf2fa}
+body.dark-mode .result button{background:#30421c;color:#e3ffb1}
+body.dark-mode .bar{background:#293445}
+body.dark-mode .notice{background:#302817;color:#f6d88a;border-color:#66532b}
+body.dark-mode .contact-section{background:linear-gradient(135deg,#151d2a 0%,#25191f 58%,#1b2815 100%)}
+body.dark-mode .person-card{background:#101722;border-color:#303b4d}
+body.dark-mode .phone-number{color:#edf2fa}
+body.dark-mode .person-badge{background:#3b2027;color:#ffb8c0}
+body.dark-mode .assistant-badge{background:#28351b;color:#d9f7a2}
+body.dark-mode .contact-footnote,body.dark-mode .footer{color:#9aa7ba}
+body.dark-mode .footer a{color:#cbd5e1}
+body.dark-mode .pill{background:#2b391c;color:#d9f7a2}
+body.dark-mode .contact-kicker{background:#e8eef7;color:#111827}
+body.dark-mode .whatsapp-btn{background:#173b27;color:#a7f3b8;border-color:#285b3c}
+@media(max-width:600px){.theme-toggle{top:8px;right:8px;padding:8px 10px;font-size:12px}.hero{padding-top:52px}}
+
 </style>
 </head>
 <body>
+<button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch color theme">🌙 Dark Mode</button>
 <div class="wrap">
 
   <section class="hero search-hero">
@@ -123,6 +157,13 @@
   <div class="footer">This independent tool is not an official service of Robi Axiata PLC. Verify numbers on the operator’s official website before purchasing.<br><a href="https://www.robi.com.bd/" target="_blank" rel="noopener">Robi</a> · <a href="https://cirkle.digital/" target="_blank" rel="noopener">Cirkle</a></div>
 </div>
 <script>
+
+const themeToggle=document.getElementById('themeToggle');
+function setTheme(mode){const dark=mode==='dark';document.body.classList.toggle('dark-mode',dark);themeToggle.textContent=dark?'☀️ Light Mode':'🌙 Dark Mode';themeToggle.setAttribute('aria-label',dark?'Switch to light mode':'Switch to dark mode');}
+let savedTheme='light';try{savedTheme=localStorage.getItem('vip-number-theme')||'light'}catch(e){}
+setTheme(savedTheme);
+themeToggle.addEventListener('click',()=>{const next=document.body.classList.contains('dark-mode')?'light':'dark';setTheme(next);try{localStorage.setItem('vip-number-theme',next)}catch(e){}});
+
 const API_URL='https://da-api.robi.com.bd/da-nll/free-msisdn/get-msisdn-list';
 const $=id=>document.getElementById(id);
 const bn=n=>String(n);
