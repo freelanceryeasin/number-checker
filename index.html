@@ -37,7 +37,7 @@
     </div>
     <div class="grid" style="margin-top:18px">
       <div class="field"><label for="start">শুরুর শেষ ৮ ডিজিট</label><input id="start" value="82200000" inputmode="numeric" maxlength="8"><div class="help">যে ৮ ডিজিট থেকে খোঁজা শুরু হবে</div></div>
-      <div class="field"><label for="max">সর্বোচ্চ কতটি নম্বর পরীক্ষা হবে</label><input id="max" type="number" min="1" max="500" value="50"><div class="help">সুরক্ষার জন্য একবারে সর্বোচ্চ ৫০০টি</div></div>
+      <div class="field"><label for="max">সর্বোচ্চ কতটি নম্বর পরীক্ষা হবে</label><input id="max" type="number" min="1" value="1000" placeholder="খালি রাখলে সীমাহীন"><div class="help">খালি রাখলে সীমাহীন পরীক্ষা চলবে; API-এর সীমা প্রযোজ্য</div></div>
       <div class="field"><label for="delay">প্রতি অনুরোধের বিরতি</label><select id="delay"><option value="250">২৫০ মিলিসেকেন্ড</option><option value="500" selected>৫০০ মিলিসেকেন্ড</option><option value="1000">১ সেকেন্ড</option></select></div>
       <div class="field"><label>পূর্ণ নম্বরের প্রিফিক্স</label><input id="prefix" value="88016" readonly><div class="help">বাংলাদেশের কান্ট্রি কোডসহ</div></div>
     </div>
@@ -102,10 +102,10 @@ async function checkOne(number, operator, signal){
 }
 $('startBtn').onclick=async()=>{
  if(running){return}
- const start=$('start').value.trim(), max=Number($('max').value), wait=Number($('delay').value);
+ const start=$('start').value.trim(), maxRaw=$('max').value.trim(), max=maxRaw===''?Infinity:Number(maxRaw), wait=Number($('delay').value);
  if(!/^\d{8}$/.test(start)){alert('শুরুর ঘরে ঠিক ৮টি ডিজিট লিখুন।');return}
- if(!Number.isInteger(max)||max<1||max>500){alert('একবারে ১ থেকে ৫০০টি নম্বর নির্বাচন করুন।');return}
- running=true;controller=new AbortController();foundNumbers=[];checked=0;startTime=Date.now();$('log').textContent='';$('startBtn').disabled=true;$('stopBtn').disabled=false;$('status').textContent='🚀 চলছে';$('total').textContent=bn(max);render();log('অপারেটর: '+brand()+'; সর্বোচ্চ পরীক্ষা: '+max);
+ if(!(max===Infinity||(Number.isInteger(max)&&max>=1))){alert('পরীক্ষার সংখ্যা ১ বা তার বেশি দিন, অথবা সীমাহীন করতে ঘরটি খালি রাখুন।');return}
+ running=true;controller=new AbortController();foundNumbers=[];checked=0;startTime=Date.now();$('log').textContent='';$('startBtn').disabled=true;$('stopBtn').disabled=false;$('status').textContent='🚀 চলছে';$('total').textContent=bn(max);render();log('অপারেটর: '+brand()+'; পরীক্ষার সীমা: '+(max===Infinity?'সীমাহীন':'সর্বোচ্চ '+max));
  let last=Number(start);
  try{
   let attempts=0;
@@ -114,10 +114,10 @@ $('startBtn').onclick=async()=>{
    const number=(brand()==='ROBI'?'88018':'88016')+suffix;
    try{const available=await checkOne(number,brand(),controller.signal);checked++;attempts++;if(available){foundNumbers.push(number);render();log('উপলভ্য বলে API জানিয়েছে: '+number)}}
    catch(e){if(e.name==='AbortError')break;log('অনুরোধ ব্যর্থ: '+e.message+' — চেক বন্ধ করা হয়েছে');break}
-   stats(max);await delay(wait);
+   stats(max===Infinity?Math.max(attempts+1,checked):max);await delay(wait);
   }
-  if(running)log('চেক সম্পন্ন।');else log('ব্যবহারকারী চেক বন্ধ করেছেন।');
- }finally{running=false;$('startBtn').disabled=false;$('stopBtn').disabled=true;$('status').textContent='⏸ প্রস্তুত';stats(max)}
+  if(running)log(last>=100000000?'৮ ডিজিটের নম্বর-পরিসর শেষ হয়েছে।':'চেক সম্পন্ন।');else log('ব্যবহারকারী চেক বন্ধ করেছেন।');
+ }finally{running=false;$('startBtn').disabled=false;$('stopBtn').disabled=true;$('status').textContent='⏸ প্রস্তুত';stats(max===Infinity?Math.max(checked,1):max)}
 };
 $('stopBtn').onclick=()=>{running=false;if(controller)controller.abort();$('status').textContent='⏹ থামানো হয়েছে'};
 $('clearBtn').onclick=()=>{foundNumbers=[];checked=0;render();stats(0);$('log').textContent='ফলাফল মুছে ফেলা হয়েছে।'};
