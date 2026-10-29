@@ -123,8 +123,8 @@ body.dark-mode .assistant-badge{background:#12354b;color:#a5f3fc}
     </div>
     <div class="grid" style="margin-top:18px">
       <div class="field"><label for="start">Starting 8 Digits</label><input id="start" value="82200000" inputmode="numeric" maxlength="8"><div class="help">Enter the 8-digit suffix to start searching from</div></div>
-      <div class="field"><label for="max">Maximum Numbers to Check</label><input id="max" type="number" min="1" value="1000" placeholder="Leave blank for unlimited"><div class="help">Leave blank for unlimited checks; API limits may apply</div></div>
-      <div class="field"><label for="delay">Delay Between Requests</label><select id="delay"><option value="250">250 milliseconds (fast)</option><option value="350" selected>350 milliseconds (recommended)</option><option value="500">500 milliseconds</option><option value="1000">1 second</option></select></div>
+      <div class="field"><label for="max">Maximum Numbers to Check</label><input id="max" type="number" min="1" value="999999" placeholder="Unlimited"><div class="help">Default: 999999 checks. Leave blank for unlimited checks. API limits may apply.</div></div>
+      <div class="field"><label for="delay">Delay Between Requests</label><select id="delay"><option value="250">250 milliseconds (fast)</option><option value="350">350 milliseconds</option><option value="500" selected>500 milliseconds (recommended)</option><option value="1000">1 second</option></select></div>
       <div class="field"><label>Full Number Prefix</label><input id="prefix" value="88016" readonly><div class="help">Includes Bangladesh country code</div></div>
     </div>
   </section>
@@ -236,7 +236,7 @@ async function checkOne(number, operator, signal){
  const payload={msisdn:number,brand:operator,simCategory:'PREPAID'};
  for(let retry=0;retry<3;retry++){
   const response=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal});
-  if(response.status===429||response.status===503){if(retry<2){log('API busy (HTTP '+response.status+'). Waiting before retry '+(retry+1)+'/2…');await delay(1500*(retry+1));continue}}
+  if(response.status===429||response.status===503){if(retry<2){log('API busy (HTTP '+response.status+'). Waiting before retry '+(retry+1)+'/2…');const retryAfter=response.headers.get('Retry-After');const retryMs=retryAfter?(Number.isFinite(Number(retryAfter))?Number(retryAfter)*1000:Math.max(1000,Date.parse(retryAfter)-Date.now())):2000*Math.pow(2,retry);await delay(Math.max(1000,retryMs));continue}}
   if(!response.ok)throw new Error('HTTP '+response.status);
   const data=await response.json();
   if(typeof data.available!=='boolean')throw new Error('Unexpected API response');
@@ -249,7 +249,7 @@ $('startBtn').onclick=async()=>{
  const start=$('start').value.trim(), maxRaw=$('max').value.trim(), max=maxRaw===''?Infinity:Number(maxRaw), wait=Number($('delay').value);
  const searchType=$('patternType').value;
  if(!/^\d{8}$/.test(start)){alert('Enter exactly 8 digits in the start field.');return}
- if(!(max===Infinity||(Number.isInteger(max)&&max>=1))){alert('Enter a check limit of at least 1, or leave the field blank for unlimited checks.');return}
+ if(!(max===Infinity||(Number.isSafeInteger(max)&&max>=1))){alert('Enter a positive whole number, or leave the field blank for unlimited checks.');return}
  running=true;const thisRun=++searchRunId;controller=new AbortController();foundNumbers=[];checked=0;pendingRender=false;startTime=Date.now();$('log').textContent='';$('startBtn').disabled=true;$('stopBtn').disabled=false;$('status').textContent='🚀 Running';$('total').textContent=bn(max);render();log('Operator: '+(brand()==='ROBI'?'Robi':'Cirkle (016)')+'; Search: '+$('patternType').selectedOptions[0].text+'; Check limit: '+(max===Infinity?'Unlimited':'Maximum '+max));
  let last=Number(start);
  try{
