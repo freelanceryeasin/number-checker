@@ -258,7 +258,7 @@ $('startBtn').onclick=async()=>{
    while(running&&attempts<max&&last<100000000){
     const suffix=String(last).padStart(8,'0');last++;if(!matchesPattern(suffix)||!matchesFixed(suffix))continue;
     const number=(brand()==='ROBI'?'88018':'88016')+suffix;
-    try{const available=await checkOne(number,brand(),controller.signal);checked++;attempts++;if(available){foundNumbers.push(number);if(foundNumbers.length===1||foundNumbers.length%10===0)pendingRender=true}}
+    try{const available=await checkOne(number,brand(),controller.signal);checked++;attempts++;if(available){foundNumbers.push(number);render();stats(max===Infinity?Math.max(attempts+1,checked):max);pendingRender=false;}}
     catch(e){if(e.name==='AbortError')break;log('Request failed: '+e.message+' — checking stopped');break}
     if(checked%5===0||pendingRender){stats(max===Infinity?Math.max(attempts+1,checked):max);if(pendingRender){render();pendingRender=false}}await delay(wait);
    }
