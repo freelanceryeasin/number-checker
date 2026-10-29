@@ -134,14 +134,12 @@ body.dark-mode .assistant-badge{background:#12354b;color:#a5f3fc}
     <div class="grid">
       <div class="field" style="grid-column:1/-1"><label for="patternType">Number Search Type</label><select id="patternType">
         <option value="allAvailable" selected>All Available Numbers</option>
-        <option value="singleCheck">Check One Number</option>
         <option value="repeat4">Custom 4 Digit — Repeated Same Digit (0000–9999)</option>
         <option value="repeat5">Custom 5 Digit — Repeated Same Digit (00000–99999)</option>
         <option value="repeat6">Custom 6 Digit — Repeated Same Digit (000000–999999)</option>
         <option value="repeat7">Custom 7 Digit — Repeated Same Digit (0000000–9999999)</option>
         <option value="repeat8">Custom 8 Digit — Repeated Same Digit (00000000–99999999)</option>
       </select><div class="help">Choose all available numbers, repeated-digit patterns, or check one specific number.</div></div>
-      <div class="field" id="singleNumberField" style="grid-column:1/-1;display:none"><label for="singleNumber">Mobile Number to Check</label><input id="singleNumber" inputmode="numeric" autocomplete="off" maxlength="13" placeholder="e.g. 01612345678"><div class="help">Enter one 11-digit Bangladeshi mobile number (016 or 018 series), or its 13-digit format starting with 880.</div></div>
     </div>
   </section>
   <section class="card">
@@ -222,12 +220,11 @@ function updatePrefix(){$('prefix').value=brand()==='ROBI'?'88018':'88016'}
 document.querySelectorAll('input[name="brand"]').forEach(r=>r.addEventListener('change',updatePrefix));
 function log(msg){$('log').textContent+=`\n${new Date().toLocaleTimeString()} ${msg}`;$('log').scrollTop=$('log').scrollHeight}
 function stats(total){$('checked').textContent=bn(checked);$('found').textContent=bn(foundNumbers.length);$('total').textContent=bn(total);const pct=total?Math.min(100,checked/total*100):0;$('pct').textContent=bn(Math.round(pct))+'%';$('bar').style.width=pct+'%';const mins=Math.max((Date.now()-startTime)/60000,1/60);$('speed').textContent=bn(Math.round(checked/mins))}
-function render(){const root=$('results');root.innerHTML='';if(!foundNumbers.length){root.innerHTML='<span class="help">No numbers found yet.</span>';return}for(const n of foundNumbers){const row=document.createElement('div');row.className='result';const span=document.createElement('span');span.className='pattern-number';span.textContent=n;if(!['allAvailable','singleCheck'].includes($('patternType').value)){const badge=document.createElement('small');badge.className='pattern-badge';badge.textContent='PATTERN MATCH';span.appendChild(badge)}const b=document.createElement('button');b.textContent='Copy';b.onclick=async()=>{await navigator.clipboard.writeText(n);log('Copied number: '+n)};row.append(span,b);root.appendChild(row)}}
+function render(){const root=$('results');root.innerHTML='';if(!foundNumbers.length){root.innerHTML='<span class="help">No numbers found yet.</span>';return}for(const n of foundNumbers){const row=document.createElement('div');row.className='result';const span=document.createElement('span');span.className='pattern-number';span.textContent=n;if($('patternType').value!=='allAvailable'){const badge=document.createElement('small');badge.className='pattern-badge';badge.textContent='PATTERN MATCH';span.appendChild(badge)}const b=document.createElement('button');b.textContent='Copy';b.onclick=async()=>{await navigator.clipboard.writeText(n);log('Copied number: '+n)};row.append(span,b);root.appendChild(row)}}
 function matchesFixed(s){for(const inp of pos.querySelectorAll('input')){const v=inp.value.trim();if(v!==''&&s[Number(inp.dataset.pos)]!==v)return false}return true}
-function updatePatternLength(){const type=$('patternType').value;$('singleNumberField').style.display=type==='singleCheck'?'':'none'}
-function matchesPattern(s){const type=$('patternType').value;const m=type.match(/^repeat([4-8])$/);if(!m||type==='allAvailable'||type==='singleCheck')return true;const length=Number(m[1]);for(let i=0;i<=s.length-length;i++){const part=s.slice(i,i+length);if(new RegExp('^(\\d)\\1{'+(length-1)+'}$').test(part))return true}return false}
+function updatePatternLength(){ /* No additional fields are needed for the selected search types. */ }
+function matchesPattern(s){const type=$('patternType').value;const m=type.match(/^repeat([4-8])$/);if(!m||type==='allAvailable')return true;const length=Number(m[1]);for(let i=0;i<=s.length-length;i++){const part=s.slice(i,i+length);if(new RegExp('^(\\d)\\1{'+(length-1)+'}$').test(part))return true}return false}
 $('patternType').addEventListener('change',updatePatternLength);
-$('singleNumber').addEventListener('input',()=>{$('singleNumber').value=$('singleNumber').value.replace(/\D/g,'').slice(0,13)});
 function delay(ms){return new Promise(r=>setTimeout(r,ms))}
 async function checkOne(number, operator, signal){
  const payload={msisdn:number,brand:operator,simCategory:'PREPAID'};
@@ -241,23 +238,13 @@ $('startBtn').onclick=async()=>{
  if(running){return}
  const start=$('start').value.trim(), maxRaw=$('max').value.trim(), max=maxRaw===''?Infinity:Number(maxRaw), wait=Number($('delay').value);
  const searchType=$('patternType').value;
- let singleNumber=$('singleNumber').value.trim();
- if(searchType==='singleCheck'){
-   if(/^01[0-9]{9}$/.test(singleNumber))singleNumber='88'+singleNumber;
-   if(!/^8801[0-9]{9}$/.test(singleNumber)){alert('Enter a valid 11-digit Bangladeshi mobile number or 13-digit number starting with 880.');return}
-   if(!singleNumber.startsWith(brand()==='ROBI'?'88018':'88016')){alert('The number must match the selected operator series ('+(brand()==='ROBI'?'018':'016')+').');return}
- }
- if(!/^\d{8}$/.test(start)&&searchType!=='singleCheck'){alert('Enter exactly 8 digits in the start field.');return}
+ if(!/^\d{8}$/.test(start)){alert('Enter exactly 8 digits in the start field.');return}
  if(!(max===Infinity||(Number.isInteger(max)&&max>=1))){alert('Enter a check limit of at least 1, or leave the field blank for unlimited checks.');return}
- running=true;controller=new AbortController();foundNumbers=[];checked=0;startTime=Date.now();$('log').textContent='';$('startBtn').disabled=true;$('stopBtn').disabled=false;$('status').textContent='🚀 Running';$('total').textContent=bn(max);render();log('Operator: '+(brand()==='ROBI'?'Robi':'Cirkle (016)')+'; Search: '+$('patternType').selectedOptions[0].text+'; Check limit: '+(searchType==='singleCheck'?'Single number':(max===Infinity?'Unlimited':'Maximum '+max)));
+ running=true;controller=new AbortController();foundNumbers=[];checked=0;startTime=Date.now();$('log').textContent='';$('startBtn').disabled=true;$('stopBtn').disabled=false;$('status').textContent='🚀 Running';$('total').textContent=bn(max);render();log('Operator: '+(brand()==='ROBI'?'Robi':'Cirkle (016)')+'; Search: '+$('patternType').selectedOptions[0].text+'; Check limit: '+(max===Infinity?'Unlimited':'Maximum '+max));
  let last=Number(start);
  try{
   let attempts=0;
-  if(searchType==='singleCheck'){
-   try{const available=await checkOne(singleNumber,brand(),controller.signal);checked=1;if(available){foundNumbers.push(singleNumber);render();log('API reports available: '+singleNumber)}else{log('The number is not available: '+singleNumber)}}
-   catch(e){if(e.name!=='AbortError')log('Request failed: '+e.message+' — checking stopped')}
-   stats(1);
-  }else{
+  {
    while(running&&attempts<max&&last<100000000){
     const suffix=String(last).padStart(8,'0');last++;if(!matchesPattern(suffix)||!matchesFixed(suffix))continue;
     const number=(brand()==='ROBI'?'88018':'88016')+suffix;
