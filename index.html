@@ -123,7 +123,7 @@ body.dark-mode .assistant-badge{background:#12354b;color:#a5f3fc}
     </div>
     <div class="grid" style="margin-top:18px">
       <div class="field"><label for="start">Starting 8 Digits</label><input id="start" value="82200000" inputmode="numeric" maxlength="8"><div class="help">Enter the 8-digit suffix to start searching from</div></div>
-      <div class="field"><label for="max">Maximum Numbers to Check</label><input id="max" type="number" min="1" max="100" value="100" placeholder="100"><div class="help">Default: 999999 checks. Leave blank for unlimited checks. API limits may apply.</div></div>
+      <div class="field"><label for="max">Maximum Numbers to Check</label><input id="max" type="number" min="1" max="99999" value="99999" placeholder="99999"><div class="help">Maximum: 99,999 checks. Leave blank for unlimited checks. API limits and the built-in candidate-scan safety cap may apply.</div></div>
       <div class="field"><label for="delay">Delay Between Requests</label><select id="delay"><option value="250">250 milliseconds (fast)</option><option value="350">350 milliseconds</option><option value="500">500 milliseconds</option><option value="1000" selected>1 second (normal)</option></select></div>
       <div class="field"><label>Full Number Prefix</label><input id="prefix" value="88016" readonly><div class="help">Includes Bangladesh country code</div></div>
     </div>
@@ -219,7 +219,7 @@ function brand(){return document.querySelector('input[name="brand"]:checked').va
 function updatePrefix(){$('prefix').value=brand()==='ROBI'?'88018':'88016'}
 document.querySelectorAll('input[name="brand"]').forEach(r=>r.addEventListener('change',updatePrefix));
 function log(msg){$('log').textContent+=`\n${new Date().toLocaleTimeString()} ${msg}`;$('log').scrollTop=$('log').scrollHeight}
-function stats(total){$('checked').textContent=bn(checked);$('found').textContent=bn(foundNumbers.length);$('total').textContent=bn(total);const pct=total?Math.min(100,checked/total*100):0;$('pct').textContent=bn(Math.round(pct))+'%';$('bar').style.width=pct+'%';const mins=Math.max((Date.now()-startTime)/60000,1/60);$('speed').textContent=bn(Math.round(checked/mins))}
+function stats(total){$('checked').textContent=bn(checked);$('found').textContent=bn(foundNumbers.length);$('total').textContent=Number.isFinite(total)?bn(total):'Unlimited';const pct=Number.isFinite(total)&&total>0?Math.min(100,checked/total*100):0;$('pct').textContent=Number.isFinite(total)?bn(Math.round(pct))+'%':'—';$('bar').style.width=Number.isFinite(total)?pct+'%':'100%';const mins=Math.max((Date.now()-startTime)/60000,1/60);$('speed').textContent=bn(Math.round(checked/mins))}
 function render(){
  const root=$('results');
  if(!foundNumbers.length){root.innerHTML='<span class="help">No numbers found yet.</span>';return}
@@ -247,9 +247,9 @@ async function checkOne(number, operator, signal){
 function setSettingsDisabled(disabled){document.querySelectorAll('input[name="brand"],#start,#max,#delay,#patternType,#positions input').forEach(el=>{el.disabled=disabled})}
 $('startBtn').onclick=async()=>{
  if(running)return;
- const start=$('start').value.trim(), max=Number($('max').value), wait=Number($('delay').value), searchType=$('patternType').value;
+ const start=$('start').value.trim(), maxInput=$('max').value.trim(), max=maxInput===''?Infinity:Number(maxInput), wait=Number($('delay').value), searchType=$('patternType').value;
  if(!/^\d{8}$/.test(start)){alert('Enter exactly 8 digits in the start field.');return}
- if(!(Number.isSafeInteger(max)&&max>=1&&max<=100)){alert('For safety and API stability, the check limit must be between 1 and 100.');return}
+ if(!(max===Infinity||(Number.isSafeInteger(max)&&max>=1&&max<=99999))){alert('Enter a check limit from 1 to 99,999, or leave the field blank for unlimited checks.');return}
  const operator=brand(), prefix=operator==='ROBI'?'88018':'88016';
  const fixed=[...pos.querySelectorAll('input')].map(inp=>inp.value.trim());
  running=true;const thisRun=++searchRunId;const runController=new AbortController();controller=runController;foundNumbers=[];checked=0;pendingRender=false;startTime=Date.now();$('log').textContent='';$('startBtn').disabled=true;$('stopBtn').disabled=false;$('status').textContent='🚀 Running';$('total').textContent=bn(max);setSettingsDisabled(true);render();log('Operator: '+(operator==='ROBI'?'Robi':'Cirkle (016)')+'; Search: '+$('patternType').selectedOptions[0].text+'; API check limit: '+max);
@@ -264,7 +264,7 @@ $('startBtn').onclick=async()=>{
    if(checked%5===0)stats(max);
    await delay(wait,runController.signal).catch(e=>{if(e.name!=='AbortError')throw e});
   }
-  if(thisRun===searchRunId){render();stats(max);if(running)log(scanned>=100000?'Candidate scan safety limit reached. Adjust the pattern or fixed positions.':(last>=100000000?'The 8-digit number range has ended.':'Checking complete.'));else log('Checking stopped by user.');}
+  if(thisRun===searchRunId){render();stats(max);if(running)log(scanned>=100000?'Built-in candidate-scan safety cap reached (100,000 candidates). Adjust the pattern or fixed positions to narrow the search.':(last>=100000000?'The 8-digit number range has ended.':'Checking complete.'));else log('Checking stopped by user.');}
  }finally{
   if(thisRun===searchRunId){running=false;controller=null;$('startBtn').disabled=false;$('stopBtn').disabled=true;$('status').textContent='⏸ Ready';setSettingsDisabled(false);stats(max)}
  }
