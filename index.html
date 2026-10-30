@@ -123,7 +123,7 @@ body.dark-mode .assistant-badge{background:#12354b;color:#a5f3fc}
     </div>
     <div class="grid" style="margin-top:18px">
       <div class="field"><label for="start">Starting 8 Digits</label><input id="start" value="82200000" inputmode="numeric" maxlength="8"><div class="help">Enter the 8-digit suffix to start searching from</div></div>
-      <div class="field"><label for="max">Maximum Numbers to Check</label><input id="max" type="number" min="1" value="999999" placeholder="Unlimited"><div class="help">Default: 999999 checks. Leave blank for unlimited checks. API limits may apply.</div></div>
+      <div class="field"><label for="max">Maximum Numbers to Check</label><input id="max" type="number" min="1" max="100" value="100" placeholder="100"><div class="help">Default: 999999 checks. Leave blank for unlimited checks. API limits may apply.</div></div>
       <div class="field"><label for="delay">Delay Between Requests</label><select id="delay"><option value="250">250 milliseconds (fast)</option><option value="350">350 milliseconds</option><option value="500">500 milliseconds</option><option value="1000" selected>1 second (normal)</option></select></div>
       <div class="field"><label>Full Number Prefix</label><input id="prefix" value="88016" readonly><div class="help">Includes Bangladesh country code</div></div>
     </div>
@@ -231,12 +231,12 @@ function matchesFixed(s){for(const inp of pos.querySelectorAll('input')){const v
 function updatePatternLength(){ /* No additional fields are needed for the selected search types. */ }
 function matchesPattern(s){const type=$('patternType').value;const m=type.match(/^repeat([4-8])$/);if(!m||type==='allAvailable')return true;const length=Number(m[1]);for(let i=0;i<=s.length-length;i++){const part=s.slice(i,i+length);if(new RegExp('^(\\d)\\1{'+(length-1)+'}$').test(part))return true}return false}
 $('patternType').addEventListener('change',updatePatternLength);
-function delay(ms){return new Promise(r=>setTimeout(r,ms))}
+function delay(ms,signal){return new Promise((resolve,reject)=>{if(signal.aborted){reject(new DOMException('Aborted','AbortError'));return}const timer=setTimeout(done,ms);function done(){signal.removeEventListener('abort',abort);resolve()}function abort(){clearTimeout(timer);signal.removeEventListener('abort',abort);reject(new DOMException('Aborted','AbortError'))}signal.addEventListener('abort',abort,{once:true})})}
 async function checkOne(number, operator, signal){
  const payload={msisdn:number,brand:operator,simCategory:'PREPAID'};
  for(let retry=0;retry<3;retry++){
   const response=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal});
-  if(response.status===429||response.status===503){if(retry<2){log('API busy (HTTP '+response.status+'). Waiting before retry '+(retry+1)+'/2…');const retryAfter=response.headers.get('Retry-After');const retryMs=retryAfter?(Number.isFinite(Number(retryAfter))?Number(retryAfter)*1000:Math.max(1000,Date.parse(retryAfter)-Date.now())):2000*Math.pow(2,retry);await delay(Math.max(1000,retryMs));continue}}
+  if(response.status===429||response.status===503){if(retry<2){log('API busy (HTTP '+response.status+'). Waiting before retry '+(retry+1)+'/2…');const retryAfter=response.headers.get('Retry-After');let retryMs=2000*Math.pow(2,retry);if(retryAfter){const seconds=Number(retryAfter);const dateMs=Date.parse(retryAfter)-Date.now();retryMs=Number.isFinite(seconds)?seconds*1000:(Number.isFinite(dateMs)?Math.max(1000,dateMs):retryMs)}await delay(Math.max(1000,Math.min(retryMs,30000)),signal);continue}}
   if(!response.ok)throw new Error('HTTP '+response.status);
   const data=await response.json();
   if(typeof data.available!=='boolean')throw new Error('Unexpected API response');
@@ -244,32 +244,35 @@ async function checkOne(number, operator, signal){
  }
  throw new Error('API is busy; retry limit reached');
 }
+function setSettingsDisabled(disabled){document.querySelectorAll('input[name="brand"],#start,#max,#delay,#patternType,#positions input').forEach(el=>{el.disabled=disabled})}
 $('startBtn').onclick=async()=>{
- if(running){return}
- const start=$('start').value.trim(), maxRaw=$('max').value.trim(), max=maxRaw===''?Infinity:Number(maxRaw), wait=Number($('delay').value);
- const searchType=$('patternType').value;
+ if(running)return;
+ const start=$('start').value.trim(), max=Number($('max').value), wait=Number($('delay').value), searchType=$('patternType').value;
  if(!/^\d{8}$/.test(start)){alert('Enter exactly 8 digits in the start field.');return}
- if(!(max===Infinity||(Number.isSafeInteger(max)&&max>=1))){alert('Enter a positive whole number, or leave the field blank for unlimited checks.');return}
- running=true;const thisRun=++searchRunId;controller=new AbortController();foundNumbers=[];checked=0;pendingRender=false;startTime=Date.now();$('log').textContent='';$('startBtn').disabled=true;$('stopBtn').disabled=false;$('status').textContent='🚀 Running';$('total').textContent=bn(max);render();log('Operator: '+(brand()==='ROBI'?'Robi':'Cirkle (016)')+'; Search: '+$('patternType').selectedOptions[0].text+'; Check limit: '+(max===Infinity?'Unlimited':'Maximum '+max));
- let last=Number(start);
+ if(!(Number.isSafeInteger(max)&&max>=1&&max<=100)){alert('For safety and API stability, the check limit must be between 1 and 100.');return}
+ const operator=brand(), prefix=operator==='ROBI'?'88018':'88016';
+ const fixed=[...pos.querySelectorAll('input')].map(inp=>inp.value.trim());
+ running=true;const thisRun=++searchRunId;const runController=new AbortController();controller=runController;foundNumbers=[];checked=0;pendingRender=false;startTime=Date.now();$('log').textContent='';$('startBtn').disabled=true;$('stopBtn').disabled=false;$('status').textContent='🚀 Running';$('total').textContent=bn(max);setSettingsDisabled(true);render();log('Operator: '+(operator==='ROBI'?'Robi':'Cirkle (016)')+'; Search: '+$('patternType').selectedOptions[0].text+'; API check limit: '+max);
+ let last=Number(start), scanned=0;
  try{
-  let attempts=0;
-  {
-   while(running&&attempts<max&&last<100000000){
-    const suffix=String(last).padStart(8,'0');last++;if(!matchesPattern(suffix)||!matchesFixed(suffix))continue;
-    const number=(brand()==='ROBI'?'88018':'88016')+suffix;
-    try{const available=await checkOne(number,brand(),controller.signal);checked++;attempts++;if(available){foundNumbers.push(number);render();stats(max===Infinity?Math.max(attempts+1,checked):max);pendingRender=false;}}
-    catch(e){if(e.name==='AbortError')break;log('Request failed: '+e.message+' — checking stopped');break}
-    if(checked%5===0||pendingRender){stats(max===Infinity?Math.max(attempts+1,checked):max);if(pendingRender){render();pendingRender=false}}await delay(wait);
-   }
-   if(thisRun===searchRunId){render();stats(max===Infinity?Math.max(attempts,checked):max);if(running)log(last>=100000000?'The 8-digit number range has ended.':'Checking complete.');else log('Checking stopped by user.');}
+  while(thisRun===searchRunId&&running&&checked<max&&last<100000000&&scanned<100000){
+   const suffix=String(last).padStart(8,'0');last++;scanned++;
+   if(!matchesPattern(suffix)||fixed.some((v,i)=>v!==''&&suffix[i]!==v))continue;
+   try{const available=await checkOne(prefix+suffix,operator,runController.signal);checked++;if(available){foundNumbers.push(prefix+suffix);render();}stats(max)}
+   catch(e){if(e.name!=='AbortError'&&thisRun===searchRunId)log('Request failed: '+e.message+' — checking stopped');break}
+   if(thisRun!==searchRunId||!running)break;
+   if(checked%5===0)stats(max);
+   await delay(wait,runController.signal).catch(e=>{if(e.name!=='AbortError')throw e});
   }
- }finally{running=false;$('startBtn').disabled=false;$('stopBtn').disabled=true;$('status').textContent='⏸ Ready';stats(max===Infinity?Math.max(checked,1):max)}
+  if(thisRun===searchRunId){render();stats(max);if(running)log(scanned>=100000?'Candidate scan safety limit reached. Adjust the pattern or fixed positions.':(last>=100000000?'The 8-digit number range has ended.':'Checking complete.'));else log('Checking stopped by user.');}
+ }finally{
+  if(thisRun===searchRunId){running=false;controller=null;$('startBtn').disabled=false;$('stopBtn').disabled=true;$('status').textContent='⏸ Ready';setSettingsDisabled(false);stats(max)}
+ }
 };
-$('stopBtn').onclick=()=>{running=false;if(controller)controller.abort();$('status').textContent='⏹ Stopped'};
-$('clearBtn').onclick=()=>{searchRunId++;running=false;if(controller)controller.abort();foundNumbers=[];checked=0;pendingRender=false;startTime=Date.now();$('startBtn').disabled=false;$('stopBtn').disabled=true;$('status').textContent='⏸ Ready';$('checked').textContent='0';$('found').textContent='0';$('total').textContent='0';$('pct').textContent='0%';$('bar').style.width='0%';$('speed').textContent='0';render();$('log').textContent='Results cleared. Any active search was stopped.'};
-$('copyAll').onclick=async()=>{if(!foundNumbers.length){alert('There are no numbers to copy.');return}await navigator.clipboard.writeText(foundNumbers.join('\n'));log('All found numbers copied.')};
-$('download').onclick=()=>{if(!foundNumbers.length){alert('There are no numbers to download.');return}const blob=new Blob([foundNumbers.join('\n')],{type:'text/plain;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='available-numbers.txt';a.click();URL.revokeObjectURL(a.href)};
+$('stopBtn').onclick=()=>{if(!running)return;running=false;searchRunId++;if(controller)controller.abort();controller=null;$('status').textContent='⏹ Stopped';$('startBtn').disabled=false;$('stopBtn').disabled=true;setSettingsDisabled(false)};
+$('clearBtn').onclick=()=>{searchRunId++;running=false;if(controller)controller.abort();controller=null;foundNumbers=[];checked=0;pendingRender=false;startTime=Date.now();$('startBtn').disabled=false;$('stopBtn').disabled=true;$('status').textContent='⏸ Ready';setSettingsDisabled(false);$('checked').textContent='0';$('found').textContent='0';$('total').textContent='0';$('pct').textContent='0%';$('bar').style.width='0%';$('speed').textContent='0';render();$('log').textContent='Results cleared. Any active search was stopped.'};
+$('copyAll').onclick=async()=>{if(!foundNumbers.length){alert('There are no numbers to copy.');return}try{await navigator.clipboard.writeText(foundNumbers.join('\n'));log('All found numbers copied.')}catch(e){alert('Clipboard unavailable. Please use Download instead.')}};
+$('download').onclick=()=>{if(!foundNumbers.length){alert('There are no numbers to download.');return}const blob=new Blob([foundNumbers.join('\n')],{type:'text/plain;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='available-numbers.txt';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
 updatePrefix();updatePatternLength();render();stats(0);
 </script>
 </body>
